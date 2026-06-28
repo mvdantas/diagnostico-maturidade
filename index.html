@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagnóstico de Maturidade Digital em Saúde · MVD Consultoria</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #0f4c81;
+      --primary-light: #1a6db5;
+      --primary-bg:    #e8f1fb;
+      --accent:        #e8760a;
+      --accent-bg:     #fff3e6;
+      --green:         #16a34a;
+      --green-bg:      #dcfce7;
+      --yellow:        #d97706;
+      --yellow-bg:     #fef3c7;
+      --red:           #dc2626;
+      --red-bg:        #fee2e2;
+      --blue2:         #0284c7;
+      --blue2-bg:      #e0f2fe;
+      --gray-50:  #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-400: #94a3b8;
+      --gray-600: #475569;
+      --gray-700: #334155;
+      --gray-800: #1e293b;
+      --white:    #ffffff;
+      --radius:   14px;
+      --shadow:   0 4px 24px rgba(0,0,0,0.09);
+      --shadow-lg:0 8px 40px rgba(0,0,0,0.13);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--gray-100);
+      color: var(--gray-800);
+      min-height: 100vh;
+      line-height: 1.65;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--primary);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header .brand {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .site-header .brand span { color: #7cc4f4; }
+    .site-header .tagline {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.78rem;
+      display: none;
+    }
+    @media(min-width:600px){ .site-header .tagline { display: block; } }
+
+    /* ── WRAPPER ── */
+    .wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+      margin-bottom: 24px;
+    }
+    @media(max-width:480px){ .card { padding: 22px 18px; } }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── INTRO ── */
+    .intro-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: var(--radius);
+      padding: 40px 32px;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+    .intro-hero h1 {
+      font-size: clamp(1.45rem, 4vw, 2rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+    .intro-hero p {
+      font-size: 1rem;
+      opacity: 0.88;
+      max-width: 560px;
+      margin: 0 auto 24px;
+    }
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+    .badge {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .info-item {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 18px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .info-item .icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .info-item strong { font-size: 0.92rem; display: block; color: var(--gray-800); }
+    .info-item span   { font-size: 0.8rem; color: var(--gray-600); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 10px;
+      border: none;
+      font-size: 0.97rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-decoration: none;
+      line-height: 1.2;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(232,118,10,0.35);
+    }
+    .btn-primary:hover { background: #c9660a; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-outline:hover { background: var(--primary-bg); }
+
+    .btn-ghost {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+    .btn-ghost:hover { background: var(--gray-200); }
+
+    .btn-lg { padding: 16px 36px; font-size: 1.08rem; border-radius: 12px; }
+    .btn-full { width: 100%; }
+
+    .btn-consult {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(22,163,74,0.35);
+      font-size: 1.05rem;
+    }
+    .btn-consult:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,163,74,0.4); }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { margin-bottom: 24px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .progress-bar-bg {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* ── DOMAIN HEADER ── */
+    .domain-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 10px;
+      padding: 18px 20px;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .domain-header .domain-ref {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .domain-header h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .domain-header p  { font-size: 0.82rem; opacity: 0.8; }
+
+    /* ── QUESTION ── */
+    .question-block {
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .question-block:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .question-num {
+      display: inline-block;
+      background: var(--primary-bg);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
+    .question-text {
+      font-size: 0.96rem;
+      color: var(--gray-800);
+      font-weight: 500;
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+
+    /* ── LIKERT ── */
+    .likert {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .likert-option { display: none; }
+    .likert-label {
+      flex: 1;
+      min-width: 52px;
+      text-align: center;
+      padding: 10px 4px 8px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .likert-label .lk-num {
+      display: block;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--gray-400);
+      transition: color 0.15s;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+    .likert-label .lk-text {
+      display: block;
+      font-size: 0.62rem;
+      color: var(--gray-600);
+      line-height: 1.2;
+    }
+    .likert-label:hover { border-color: var(--primary-light); background: var(--primary-bg); }
+    .likert-option:checked + .likert-label {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+    .likert-option:checked + .likert-label .lk-num { color: var(--primary); }
+
+    .likert-option[value="1"]:checked + .likert-label { border-color: var(--red); background: var(--red-bg); }
+    .likert-option[value="1"]:checked + .likert-label .lk-num { color: var(--red); }
+    .likert-option[value="2"]:checked + .likert-label { border-color: var(--yellow); background: var(--yellow-bg); }
+    .likert-option[value="2"]:checked + .likert-label .lk-num { color: var(--yellow); }
+    .likert-option[value="3"]:checked + .likert-label { border-color: var(--blue2); background: var(--blue2-bg); }
+    .likert-option[value="3"]:checked + .likert-label .lk-num { color: var(--blue2); }
+    .likert-option[value="4"]:checked + .likert-label { border-color: var(--green); background: var(--green-bg); }
+    .likert-option[value="4"]:checked + .likert-label .lk-num { color: var(--green); }
+    .likert-option[value="5"]:checked + .likert-label { border-color: #7c3aed; background: #f5f3ff; }
+    .likert-option[value="5"]:checked + .likert-label .lk-num { color: #7c3aed; }
+
+    /* ── SCALE LEGEND ── */
+    .scale-legend {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+      background: var(--gray-50);
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+      margin-bottom: 24px;
+    }
+    .scale-legend span {
+      font-size: 0.7rem;
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+    .scale-legend strong { color: var(--gray-800); }
+
+    /* ── NAV BUTTONS ── */
+    .nav-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .nav-buttons .btn { flex: 1; min-width: 120px; }
+
+    /* ── LEAD FORM ── */
+    .lead-form-intro {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .lead-form-intro .lock-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .lead-form-intro h2 { font-size: 1.3rem; font-weight: 800; color: var(--gray-800); margin-bottom: 8px; }
+    .lead-form-intro p  { font-size: 0.9rem; color: var(--gray-600); max-width: 480px; margin: 0 auto; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media(max-width:540px){ .form-row { grid-template-columns: 1fr; } }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+    }
+    .form-group label .req { color: var(--red); margin-left: 2px; }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 9px;
+      font-size: 0.94rem;
+      color: var(--gray-800);
+      background: var(--white);
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(26,109,181,0.12);
+    }
+    .form-group input.error,
+    .form-group select.error { border-color: var(--red); }
+    .field-error { font-size: 0.75rem; color: var(--red); margin-top: 4px; display: none; }
+    .field-error.show { display: block; }
+    .lgpd-note {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── RESULT ── */
+    .result-hero {
+      text-align: center;
+      padding: 36px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: var(--radius);
+      color: var(--white);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+    .result-hero .greeting { font-size: 0.9rem; opacity: 0.8; margin-bottom: 6px; }
+    .result-hero .score-circle {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 5px solid rgba(255,255,255,0.35);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+    }
+    .result-hero .score-pct { font-size: 2.4rem; font-weight: 900; line-height: 1; }
+    .result-hero .score-label { font-size: 0.72rem; opacity: 0.75; margin-top: 2px; }
+    .result-hero .stage-badge {
+      display: inline-block;
+      padding: 7px 22px;
+      border-radius: 99px;
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .result-hero .stage-desc { font-size: 0.88rem; opacity: 0.85; max-width: 480px; margin: 0 auto; }
+
+    /* stage colors */
+    .stage-1 .stage-badge { background: #fee2e2; color: #991b1b; }
+    .stage-2 .stage-badge { background: #fef3c7; color: #92400e; }
+    .stage-3 .stage-badge { background: #dbeafe; color: #1e40af; }
+    .stage-4 .stage-badge { background: #d1fae5; color: #065f46; }
+    .stage-5 .stage-badge { background: #ede9fe; color: #4c1d95; }
+
+    /* ── DOMAIN BARS ── */
+    .section-title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--gray-600);
+      margin-bottom: 16px;
+    }
+    .domain-row {
+      margin-bottom: 14px;
+    }
+    .domain-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+    .domain-row-head .d-name { font-size: 0.86rem; font-weight: 600; color: var(--gray-800); }
+    .domain-row-head .d-pct  { font-size: 0.82rem; font-weight: 700; color: var(--primary); }
+    .d-bar-bg {
+      height: 10px;
+      background: var(--gray-100);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .d-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      transition: width 1s cubic-bezier(.25,.8,.25,1);
+    }
+    .d-bar-fill.low    { background: linear-gradient(90deg, #dc2626, #ef4444); }
+    .d-bar-fill.medium { background: linear-gradient(90deg, #d97706, #f59e0b); }
+    .d-bar-fill.good   { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+    .d-bar-fill.great  { background: linear-gradient(90deg, #16a34a, #22c55e); }
+    .d-bar-fill.top    { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+
+    /* ── RECOMMENDATIONS ── */
+    .reco-card {
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .reco-card.priority { background: #fff7ed; border: 1px solid #fed7aa; }
+    .reco-card.good     { background: var(--green-bg); border: 1px solid #bbf7d0; }
+    .reco-card .reco-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
+    .reco-card .reco-title { font-size: 0.88rem; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+    .reco-card .reco-text  { font-size: 0.82rem; color: var(--gray-600); line-height: 1.5; }
+
+    /* ── STAGE TABLE ── */
+    .stage-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+    .stage-table th {
+      background: var(--primary);
+      color: var(--white);
+      padding: 8px 12px;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .stage-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-200); }
+    .stage-table tr:last-child td { border-bottom: none; }
+    .stage-table tr.highlight td { background: var(--primary-bg); font-weight: 700; }
+    .stage-pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .sp-1 { background: var(--red-bg);    color: var(--red); }
+    .sp-2 { background: var(--yellow-bg); color: var(--yellow); }
+    .sp-3 { background: var(--blue2-bg);  color: var(--blue2); }
+    .sp-4 { background: var(--green-bg);  color: var(--green); }
+    .sp-5 { background: #ede9fe;          color: #4c1d95; }
+
+    /* ── CTA CONSULT ── */
+    .consult-cta {
+      text-align: center;
+      background: linear-gradient(135deg, #064e3b, #065f46);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      color: var(--white);
+      margin-top: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+    .consult-cta h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+    .consult-cta p  { font-size: 0.88rem; opacity: 0.85; margin-bottom: 20px; max-width: 440px; margin-left: auto; margin-right: auto; }
+
+    /* ── TOAST / SUCCESS ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120px);
+      background: var(--gray-800);
+      color: var(--white);
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .consult-success {
+      background: var(--green-bg);
+      border: 2px solid #86efac;
+      border-radius: 12px;
+      padding: 20px 24px;
+      text-align: center;
+      margin-top: 16px;
+      display: none;
+    }
+    .consult-success.show { display: block; }
+    .consult-success h4 { color: var(--green); font-size: 1.05rem; margin-bottom: 6px; }
+    .consult-success p  { font-size: 0.85rem; color: #166534; }
+
+    /* ── VALIDATION ERROR ── */
+    .alert-error {
+      background: var(--red-bg);
+      border: 1px solid #fca5a5;
+      color: var(--red);
+      padding: 12px 16px;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert-error.show { display: block; }
+
+    /* ── LOADER ── */
+    .loader {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255,255,255,0.35);
+      border-top-color: var(--white);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── MISC ── */
+    .text-center { text-align: center; }
+    .mt-4  { margin-top: 4px; }
+    .mt-8  { margin-top: 8px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .divider { height: 1px; background: var(--gray-200); margin: 24px 0; }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      margin-top: 32px;
+      line-height: 1.6;
+    }
+    .footer-note a { color: var(--primary); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="brand">MVD <span>Consultoria</span> em Saúde</div>
+  <div class="tagline">Diagnóstico de Maturidade Digital</div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 1 · INTRO
+════════════════════════════════════════ -->
+<div id="screen-intro" class="screen active">
+  <div class="wrapper">
+
+    <div class="intro-hero">
+      <h1>Qual é o nível de maturidade digital do seu consultório?</h1>
+      <p>Responda 20 perguntas rápidas e descubra em qual estágio de transformação digital você está — com base nos principais frameworks internacionais de saúde digital.</p>
+      <div class="badges">
+        <span class="badge">HIMSS EMRAM</span>
+        <span class="badge">NHS DMA 2025</span>
+        <span class="badge">WHO DHI</span>
+        <span class="badge">RNDS · LGPD</span>
+        <span class="badge">FOLKS DMI-H 2024</span>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="startQuiz()">
+        Iniciar Diagnóstico Gratuito →
+      </button>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="icon">⏱️</div>
+        <div>
+          <strong>5 minutos</strong>
+          <span>Para completar o diagnóstico</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">📊</div>
+        <div>
+          <strong>20 perguntas</strong>
+          <span>Em 5 dimensões digitais</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">🏆</div>
+        <div>
+          <strong>5 estágios</strong>
+          <span>Do Inicial ao Inovador</span>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">🎯</div>
+        <div>
+          <strong>Resultado imediato</strong>
+          <span>Com recomendações personalizadas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card text-center">
+      <p style="font-size:0.88rem;color:var(--gray-600);line-height:1.6;">
+        Desenvolvido com base em <strong>HIMSS EMRAM, INFRAM, AMAM</strong>, <strong>NHS Digital Maturity Assessment 2025</strong>,
+        <strong>WHO Digital Health Indicator</strong> e no índice <strong>DMI-H da FOLKS 2024</strong> (189 hospitais brasileiros).
+        Adaptado para médicos, consultórios e pequenas clínicas de saúde.
+      </p>
+    </div>
+
+    <p class="footer-note">
+      MVD Consultoria em Saúde · Baseado em HIMSS EMRAM/INFRAM/AMAM/DHI · FOLKS DMI-H 2024 · NHS DMA 2025 · WHO DHI · RNDS/LGPD
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 2 · QUESTIONS
+════════════════════════════════════════ -->
+<div id="screen-quiz" class="screen">
+  <div class="wrapper">
+
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progress-text">Domínio 1 de 5</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="scale-legend">
+      <span><strong>1</strong> Inexistente</span>
+      <span>·</span>
+      <span><strong>2</strong> Iniciante</span>
+      <span>·</span>
+      <span><strong>3</strong> Em desenvolvimento</span>
+      <span>·</span>
+      <span><strong>4</strong> Avançado</span>
+      <span>·</span>
+      <span><strong>5</strong> Inovador</span>
+    </div>
+
+    <div id="domain-container" class="card"></div>
+
+    <div class="alert-error" id="quiz-error">
+      Por favor, responda todas as perguntas deste bloco antes de continuar.
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn btn-ghost" id="btn-prev" onclick="prevDomain()">← Voltar</button>
+      <button class="btn btn-primary" id="btn-next" onclick="nextDomain()">Próximo →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 3 · LEAD GATE
+════════════════════════════════════════ -->
+<div id="screen-lead" class="screen">
+  <div class="wrapper">
+
+    <div class="card">
+      <div class="lead-form-intro">
+        <div class="lock-icon">🔓</div>
+        <h2>Seu resultado está pronto!</h2>
+        <p>Preencha os dados abaixo para liberar seu diagnóstico personalizado de maturidade digital.</p>
+      </div>
+
+      <div class="alert-error" id="lead-error">Preencha todos os campos obrigatórios.</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome completo <span class="req">*</span></label>
+          <input type="text" id="lead-name" placeholder="Dr. João Silva" />
+          <div class="field-error" id="err-name">Campo obrigatório</div>
+        </div>
+        <div class="form-group">
+          <label>E-mail <span class="req">*</span></label>
+          <input type="email" id="lead-email" placeholder="joao@clinica.com.br" />
+          <div class="field-error" id="err-email">E-mail inválido</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="lead-whatsapp" placeholder="(11) 99999-9999" />
+          <div class="field-error" id="err-whatsapp">Campo obrigatório</div>
+        </div>
+        <div class="form-group">
+          <label>Cidade <span class="req">*</span></label>
+          <input type="text" id="lead-city" placeholder="São Paulo" />
+          <div class="field-error" id="err-city">Campo obrigatório</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Especialidade / Área de atuação <span class="req">*</span></label>
+        <select id="lead-specialty">
+          <option value="">Selecione sua especialidade</option>
+          <optgroup label="Medicina">
+            <option>Clínica Geral / Medicina de Família</option>
+            <option>Cardiologia</option>
+            <option>Dermatologia</option>
+            <option>Endocrinologia</option>
+            <option>Gastroenterologia</option>
+            <option>Geriatria</option>
+            <option>Ginecologia e Obstetrícia</option>
+            <option>Infectologia</option>
+            <option>Neurologia</option>
+            <option>Oftalmologia</option>
+            <option>Oncologia</option>
+            <option>Ortopedia</option>
+            <option>Otorrinolaringologia</option>
+            <option>Pediatria</option>
+            <option>Pneumologia</option>
+            <option>Psiquiatria</option>
+            <option>Reumatologia</option>
+            <option>Urologia</option>
+            <option>Outra especialidade médica</option>
+          </optgroup>
+          <optgroup label="Outras áreas da saúde">
+            <option>Odontologia</option>
+            <option>Psicologia</option>
+            <option>Fisioterapia</option>
+            <option>Nutrição</option>
+            <option>Enfermagem</option>
+            <option>Gestão de Clínicas / Administração em Saúde</option>
+            <option>Outra área da saúde</option>
+          </optgroup>
+        </select>
+        <div class="field-error" id="err-specialty">Selecione uma especialidade</div>
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg mt-16" id="btn-submit-lead" onclick="submitLead()">
+        Ver meu resultado →
+      </button>
+
+      <p class="lgpd-note mt-8">
+        🔒 Seus dados são protegidos conforme a LGPD. Utilizados apenas para envio do diagnóstico e contato da nossa equipe.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 4 · RESULT
+════════════════════════════════════════ -->
+<div id="screen-result" class="screen">
+  <div class="wrapper">
+
+    <!-- Hero com score -->
+    <div class="result-hero" id="result-hero">
+      <div class="greeting" id="result-greeting">Olá, Dr(a). !</div>
+      <div class="score-circle">
+        <span class="score-pct" id="result-pct">0%</span>
+        <span class="score-label">Maturidade</span>
+      </div>
+      <div class="stage-badge" id="result-stage-badge">Estágio —</div>
+      <div class="stage-desc" id="result-stage-desc"></div>
+    </div>
+
+    <!-- Breakdown por domínio -->
+    <div class="card">
+      <div class="section-title">Desempenho por dimensão</div>
+      <div id="domain-results"></div>
+    </div>
+
+    <!-- Recomendações -->
+    <div class="card">
+      <div class="section-title">Recomendações prioritárias</div>
+      <div id="recommendations"></div>
+    </div>
+
+    <!-- Tabela de estágios -->
+    <div class="card">
+      <div class="section-title">Escala de maturidade digital · Consultórios &amp; Clínicas</div>
+      <div style="overflow-x:auto;">
+        <table class="stage-table" id="stage-table"></table>
+      </div>
+      <p style="font-size:0.72rem;color:var(--gray-400);margin-top:10px;">
+        Baseado em HIMSS EMRAM/INFRAM/AMAM/DHI · FOLKS DMI-H 2024 · NHS DMA 2025 · WHO DHI · RNDS/LGPD
+      </p>
+    </div>
+
+    <!-- CTA Consultoria -->
+    <div class="consult-cta">
+      <h3>Quer acelerar sua transformação digital?</h3>
+      <p>Nossos especialistas podem elaborar um plano personalizado para levar seu consultório ao próximo estágio de maturidade digital.</p>
+      <button class="btn btn-consult btn-lg" id="btn-consult" onclick="requestConsult()">
+        Quero marcar uma consultoria
+      </button>
+      <div class="consult-success" id="consult-success">
+        <h4>✅ Solicitação recebida!</h4>
+        <p>Nossa equipe entrará em contato em breve para agendar sua consultoria. Fique de olho no seu WhatsApp e e-mail!</p>
+      </div>
+    </div>
+
+    <p class="footer-note mt-24">
+      MVD Consultoria em Saúde · Diagnóstico de Maturidade Digital para Médicos e Clínicas<br/>
+      Baseado em HIMSS EMRAM · NHS DMA 2025 · WHO DHI · FOLKS DMI-H 2024 · RNDS/LGPD
+    </p>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════ -->
+<script>
+/* ──────────────────────────────────────────────────────
+   HUBSPOT CONFIGURATION
+   ──────────────────────────────────────────────────────
+   1. Crie um formulário no HubSpot com os campos:
+      - firstname
+      - email
+      - phone           (WhatsApp)
+      - city            (propriedade padrão)
+      - especialidade   (propriedade personalizada — texto)
+      - estagio_maturidade (propriedade personalizada — texto)
+      - score_maturidade   (propriedade personalizada — número)
+      - quer_consultoria   (propriedade personalizada — booleano)
+
+   2. Substitua os valores abaixo com os dados da sua conta:
+      - PORTAL_ID: encontrado em Configurações > Conta > Portal ID
+      - FORM_GUID: na URL do formulário em HubSpot > Marketing > Formulários
+──────────────────────────────────────────────────────── */
+const HS_PORTAL_ID  = 'SEU_PORTAL_ID_AQUI';   // ex: '12345678'
+const HS_FORM_GUID  = 'SEU_FORM_GUID_AQUI';   // ex: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+
+/* ──────────────────────────────────────────────────────
+   QUESTIONS DATA
+   5 domínios × 4 perguntas = 20 questões · máx 100 pts
+──────────────────────────────────────────────────────── */
+const DOMAINS = [
+  {
+    id: 'D1',
+    name: 'Gestão & Estratégia Digital',
+    ref: 'HIMSS DHI · FOLKS DMI-H · NHS DMA',
+    desc: 'Visão estratégica, investimento e governança dos dados do consultório',
+    questions: [
+      'Você tem uma visão clara de como a tecnologia pode melhorar seu consultório ou clínica e busca se atualizar sobre inovações digitais em saúde?',
+      'Você investe periodicamente em ferramentas e soluções digitais para a gestão e operação do consultório?',
+      'Os dados dos pacientes e registros do consultório são protegidos com senha, controle de acesso e backup regular, em conformidade com a LGPD?',
+      'Você acompanha indicadores de desempenho do consultório (agenda, faturamento, satisfação) por meio de relatórios ou dashboards digitais?',
+    ]
+  },
+  {
+    id: 'D2',
+    name: 'Infraestrutura & Tecnologia',
+    ref: 'HIMSS INFRAM · LGPD',
+    desc: 'Conectividade, equipamentos, segurança e armazenamento de dados',
+    questions: [
+      'Seu consultório ou clínica possui internet de boa qualidade e estável, disponível para uso clínico e administrativo?',
+      'Seus sistemas, arquivos e dados clínicos estão armazenados em nuvem ou com backup automatizado e seguro?',
+      'Os equipamentos do consultório (computadores, tablets, impressoras) estão atualizados e em bom estado de funcionamento?',
+      'Você possui termo de consentimento para uso de dados, política de privacidade e medidas de segurança em conformidade com a LGPD?',
+    ]
+  },
+  {
+    id: 'D3',
+    name: 'Prontuário Eletrônico & Processos Clínicos',
+    ref: 'HIMSS EMRAM · NHS WGLL',
+    desc: 'Prontuário digital, prescrição eletrônica, telemedicina',
+    questions: [
+      'Você utiliza Prontuário Eletrônico do Paciente (PEP / software médico) em vez de fichas ou formulários em papel?',
+      'Prescrições, atestados, encaminhamentos e outros documentos clínicos são gerados e entregues de forma digital?',
+      'Os resultados de exames dos pacientes chegam de forma digital e ficam registrados e acessíveis no histórico clínico?',
+      'Você realiza atendimentos por telemedicina ou teleconsulta de forma estruturada e regularmente?',
+    ]
+  },
+  {
+    id: 'D4',
+    name: 'Experiência Digital do Paciente',
+    ref: 'HIMSS DHI · Person-Enabled Health · NHS DMA',
+    desc: 'Jornada digital do paciente, agendamento online, comunicação e feedback',
+    questions: [
+      'Seus pacientes podem agendar consultas de forma online (site, WhatsApp Business, aplicativo ou plataformas de agendamento)?',
+      'Você envia lembretes automáticos de consulta e comunicações pós-atendimento (orientações, retorno) por canais digitais?',
+      'Seus pacientes têm acesso digital a receitas, atestados, resultados de exames ou histórico clínico (portal, app, WhatsApp)?',
+      'Você coleta e analisa feedback ou avaliações dos pacientes de forma estruturada para melhorar continuamente o atendimento?',
+    ]
+  },
+  {
+    id: 'D5',
+    name: 'Dados, Analytics & Integração',
+    ref: 'HIMSS AMAM · WHO DHI · RNDS · TISS/TUSS',
+    desc: 'Uso de dados para gestão, faturamento eletrônico, IA e integração com ecossistema de saúde',
+    questions: [
+      'Você usa dados do consultório para tomar decisões estratégicas (ex.: horários de maior demanda, taxa de retorno, perfil de pacientes)?',
+      'O faturamento e a troca de informações com planos de saúde e convênios ocorrem de forma eletrônica (TISS, guias digitais, sem retrabalho manual relevante)?',
+      'Você usa ou está explorando ferramentas de inteligência artificial ou automação para apoio clínico (triagem, protocolos) ou administrativo (atendimento, agendamento)?',
+      'Você está integrado ou planeja integrar com a RNDS (Rede Nacional de Dados em Saúde) ou com outros sistemas e ecossistemas digitais de saúde?',
+    ]
+  }
+];
+
+const STAGES = [
+  { min: 0,  max: 25,  label: 'Estágio 1 · Inicial',           cls: 'sp-1', heroCls: 'stage-1',
+    desc: 'Ausência de estratégia e ferramentas digitais. É o momento de dar os primeiros passos com planejamento e investimento orientado.' },
+  { min: 26, max: 45,  label: 'Estágio 2 · Emergente',         cls: 'sp-2', heroCls: 'stage-2',
+    desc: 'Iniciativas digitais isoladas, sem integração. Um roadmap estruturado fará grande diferença para avançar com consistência.' },
+  { min: 46, max: 60,  label: 'Estágio 3 · Em Desenvolvimento',cls: 'sp-3', heroCls: 'stage-3',
+    desc: 'Jornada digital iniciada. Alinhado à média nacional de hospitais (FOLKS 2024: 46,2%). Hora de integrar e consolidar as soluções.' },
+  { min: 61, max: 75,  label: 'Estágio 4 · Avançado',          cls: 'sp-4', heroCls: 'stage-4',
+    desc: 'Capacidades digitais consolidadas. Você é referência no setor. Foco em escala, dados e exploração de IA.' },
+  { min: 76, max: 100, label: 'Estágio 5 · Inovador',          cls: 'sp-5', heroCls: 'stage-5',
+    desc: 'Maturidade digital elevada. Compatível com os mais altos padrões internacionais (HIMSS nível 6–7). Benchmark do setor.' },
+];
+
+const RECOMMENDATIONS = {
+  D1: {
+    priority: 'Defina uma estratégia digital mínima: escolha 2–3 ferramentas-chave, aloque um orçamento anual e implemente política de backup e conformidade com a LGPD.',
+    good: 'Sua gestão digital está estruturada. Avance para indicadores em tempo real e integração de dados clínicos e administrativos.',
+  },
+  D2: {
+    priority: 'Priorize infraestrutura de base: internet estável, equipamentos adequados, armazenamento em nuvem e política de segurança da informação (LGPD).',
+    good: 'Boa base tecnológica. Considere plano de continuidade em caso de falha e atualização periódica dos equipamentos.',
+  },
+  D3: {
+    priority: 'Adote um Prontuário Eletrônico do Paciente (PEP). Eliminar o papel é o passo mais transformador para médicos e clínicas.',
+    good: 'Processos clínicos bem digitalizados. Explore telemedicina estruturada e integração de resultados de exames.',
+  },
+  D4: {
+    priority: 'Implante agendamento online e comunicação automatizada com pacientes. O WhatsApp Business já é um ponto de partida acessível.',
+    good: 'Boa experiência digital para o paciente. Estruture coleta de NPS e expanda o acesso digital ao histórico clínico.',
+  },
+  D5: {
+    priority: 'Comece a usar dados para decisões básicas de gestão. Regularize o faturamento eletrônico com convênios (TISS) e explore automações simples.',
+    good: 'Uso inteligente de dados. Explore ferramentas de IA para triagem, protocolos clínicos e otimização de agenda.',
+  },
+};
+
+/* ──────────────────────────────────────────────────────
+   STATE
+──────────────────────────────────────────────────────── */
+let currentDomain = 0;
+let answers = {};   // { 'D1-0': 3, 'D1-1': 2, ... }
+let leadData = {};
+
+/* ──────────────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuiz() {
+  currentDomain = 0;
+  renderDomain(0);
+  showScreen('screen-quiz');
+}
+
+function prevDomain() {
+  if (currentDomain === 0) { showScreen('screen-intro'); return; }
+  currentDomain--;
+  renderDomain(currentDomain);
+}
+
+function nextDomain() {
+  const erEl = document.getElementById('quiz-error');
+  if (!validateDomain()) { erEl.classList.add('show'); return; }
+  erEl.classList.remove('show');
+
+  if (currentDomain < DOMAINS.length - 1) {
+    currentDomain++;
+    renderDomain(currentDomain);
+  } else {
+    showScreen('screen-lead');
+  }
+}
+
+/* ──────────────────────────────────────────────────────
+   RENDER DOMAIN
+──────────────────────────────────────────────────────── */
+function renderDomain(idx) {
+  const d = DOMAINS[idx];
+  const total = DOMAINS.length;
+  const pct = Math.round((idx / total) * 100);
+
+  document.getElementById('progress-text').textContent = `Dimensão ${idx + 1} de ${total} · ${d.name}`;
+  document.getElementById('progress-pct').textContent  = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('btn-prev').textContent = idx === 0 ? '← Início' : '← Voltar';
+  document.getElementById('btn-next').textContent = idx === total - 1 ? 'Ver resultado →' : 'Próximo →';
+
+  let html = `
+    <div class="domain-header">
+      <div class="domain-ref">${d.id} · ${d.ref}</div>
+      <h2>${d.name}</h2>
+      <p>${d.desc}</p>
+    </div>
+  `;
+
+  d.questions.forEach((q, qi) => {
+    const key = `${d.id}-${qi}`;
+    const saved = answers[key];
+    const qNum = DOMAINS.slice(0, idx).reduce((s, dd) => s + dd.questions.length, 0) + qi + 1;
+
+    html += `<div class="question-block">
+      <span class="question-num">Pergunta ${qNum}</span>
+      <p class="question-text">${q}</p>
+      <div class="likert">`;
+
+    const labels = ['Inexistente', 'Iniciante', 'Desenvolvendo', 'Avançado', 'Inovador'];
+    for (let v = 1; v <= 5; v++) {
+      const checked = saved == v ? 'checked' : '';
+      html += `
+        <input type="radio" class="likert-option" name="${key}" id="${key}-${v}" value="${v}" ${checked}
+               onchange="saveAnswer('${key}', ${v})">
+        <label class="likert-label" for="${key}-${v}">
+          <span class="lk-num">${v}</span>
+          <span class="lk-text">${labels[v-1]}</span>
+        </label>`;
+    }
+    html += `</div></div>`;
+  });
+
+  document.getElementById('domain-container').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function saveAnswer(key, val) {
+  answers[key] = val;
+}
+
+function validateDomain() {
+  const d = DOMAINS[currentDomain];
+  return d.questions.every((_, qi) => answers[`${d.id}-${qi}`] !== undefined);
+}
+
+/* ──────────────────────────────────────────────────────
+   COMPUTE SCORE
+──────────────────────────────────────────────────────── */
+function computeScores() {
+  const domainScores = {};
+  let totalGot = 0, totalMax = 0;
+
+  DOMAINS.forEach(d => {
+    let got = 0, max = d.questions.length * 5;
+    d.questions.forEach((_, qi) => {
+      got += Number(answers[`${d.id}-${qi}`] || 1);
+    });
+    domainScores[d.id] = { got, max, pct: Math.round((got / max) * 100) };
+    totalGot += got;
+    totalMax += max;
+  });
+
+  const totalPct = Math.round((totalGot / totalMax) * 100);
+  const stage = STAGES.find(s => totalPct >= s.min && totalPct <= s.max) || STAGES[0];
+
+  return { domainScores, totalPct, totalGot, totalMax, stage };
+}
+
+/* ──────────────────────────────────────────────────────
+   LEAD FORM
+──────────────────────────────────────────────────────── */
+function submitLead() {
+  const name      = document.getElementById('lead-name').value.trim();
+  const email     = document.getElementById('lead-email').value.trim();
+  const whatsapp  = document.getElementById('lead-whatsapp').value.trim();
+  const city      = document.getElementById('lead-city').value.trim();
+  const specialty = document.getElementById('lead-specialty').value;
+
+  let valid = true;
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  document.getElementById('err-name').classList.toggle('show', !name);
+  document.getElementById('lead-name').classList.toggle('error', !name);
+  if (!name) valid = false;
+
+  document.getElementById('err-email').classList.toggle('show', !emailRe.test(email));
+  document.getElementById('lead-email').classList.toggle('error', !emailRe.test(email));
+  if (!emailRe.test(email)) valid = false;
+
+  document.getElementById('err-whatsapp').classList.toggle('show', !whatsapp);
+  document.getElementById('lead-whatsapp').classList.toggle('error', !whatsapp);
+  if (!whatsapp) valid = false;
+
+  document.getElementById('err-city').classList.toggle('show', !city);
+  document.getElementById('lead-city').classList.toggle('error', !city);
+  if (!city) valid = false;
+
+  document.getElementById('err-specialty').classList.toggle('show', !specialty);
+  document.getElementById('lead-specialty').classList.toggle('error', !specialty);
+  if (!specialty) valid = false;
+
+  if (!valid) {
+    document.getElementById('lead-error').classList.add('show');
+    return;
+  }
+
+  leadData = { name, email, whatsapp, city, specialty };
+
+  const btn = document.getElementById('btn-submit-lead');
+  btn.innerHTML = '<span class="loader"></span> Calculando...';
+  btn.disabled = true;
+
+  const scores = computeScores();
+
+  // Submit to HubSpot (non-blocking)
+  sendToHubspot(false, scores);
+
+  setTimeout(() => {
+    renderResult(leadData, scores);
+    showScreen('screen-result');
+    btn.innerHTML = 'Ver meu resultado →';
+    btn.disabled = false;
+  }, 1200);
+}
+
+/* ──────────────────────────────────────────────────────
+   RENDER RESULT
+──────────────────────────────────────────────────────── */
+function renderResult(lead, scores) {
+  const { domainScores, totalPct, stage } = scores;
+  const firstName = lead.name.split(' ')[0];
+
+  // Hero
+  document.getElementById('result-greeting').textContent = `Olá, ${firstName}!`;
+  document.getElementById('result-pct').textContent = totalPct + '%';
+  document.getElementById('result-stage-badge').textContent = stage.label;
+  document.getElementById('result-stage-desc').textContent  = stage.desc;
+  const hero = document.getElementById('result-hero');
+  hero.className = 'result-hero ' + stage.heroCls;
+
+  // Animate score
+  animateNumber('result-pct', 0, totalPct, 1000, '%');
+
+  // Domain bars
+  let domHtml = '';
+  const barColors = ['low','medium','good','great','top'];
+  DOMAINS.forEach(d => {
+    const ds = domainScores[d.id];
+    const stageIdx = STAGES.findIndex(s => ds.pct >= s.min && ds.pct <= s.max);
+    const colorCls = barColors[Math.min(stageIdx, 4)];
+    domHtml += `
+      <div class="domain-row">
+        <div class="domain-row-head">
+          <span class="d-name">${d.id} · ${d.name}</span>
+          <span class="d-pct">${ds.pct}%</span>
+        </div>
+        <div class="d-bar-bg">
+          <div class="d-bar-fill ${colorCls}" id="dbar-${d.id}" style="width:0%"></div>
+        </div>
+      </div>`;
+  });
+  document.getElementById('domain-results').innerHTML = domHtml;
+
+  // Animate bars (delayed)
+  setTimeout(() => {
+    DOMAINS.forEach(d => {
+      document.getElementById(`dbar-${d.id}`).style.width = domainScores[d.id].pct + '%';
+    });
+  }, 300);
+
+  // Recommendations: 2 worst domains + 1 best
+  const sorted = [...DOMAINS].sort((a, b) => domainScores[a.id].pct - domainScores[b.id].pct);
+  const worst = sorted.slice(0, 2);
+  const best  = sorted[sorted.length - 1];
+
+  let recoHtml = '';
+  worst.forEach(d => {
+    recoHtml += `
+      <div class="reco-card priority">
+        <div class="reco-icon">🎯</div>
+        <div>
+          <div class="reco-title">Prioridade: ${d.name} (${domainScores[d.id].pct}%)</div>
+          <div class="reco-text">${RECOMMENDATIONS[d.id].priority}</div>
+        </div>
+      </div>`;
+  });
+  recoHtml += `
+    <div class="reco-card good">
+      <div class="reco-icon">✅</div>
+      <div>
+        <div class="reco-title">Ponto forte: ${best.name} (${domainScores[best.id].pct}%)</div>
+        <div class="reco-text">${RECOMMENDATIONS[best.id].good}</div>
+      </div>
+    </div>`;
+  document.getElementById('recommendations').innerHTML = recoHtml;
+
+  // Stage table
+  let tHtml = `
+    <thead>
+      <tr>
+        <th>Faixa</th>
+        <th>Estágio</th>
+        <th>Significado</th>
+      </tr>
+    </thead><tbody>`;
+  const meanings = [
+    'Ausência de ferramentas e estratégia digital. Prioridade máxima de investimento.',
+    'Iniciativas isoladas, sem integração. Necessita de roadmap estruturado.',
+    'Jornada digital iniciada. Alinhado à média nacional de hospitais (FOLKS 2024: 46,2%).',
+    'Capacidades digitais consolidadas. Referência no setor. Foco em escala e IA.',
+    'Maturidade elevada. Compatível com certificação HIMSS nível 6–7.',
+  ];
+  STAGES.forEach((s, i) => {
+    const isCurrent = s.heroCls === stage.heroCls;
+    tHtml += `<tr ${isCurrent ? 'class="highlight"' : ''}>
+      <td>${s.min}–${s.max}%</td>
+      <td><span class="stage-pill ${s.cls}">${s.label}</span>${isCurrent ? ' ◀ você' : ''}</td>
+      <td>${meanings[i]}</td>
+    </tr>`;
+  });
+  tHtml += '</tbody>';
+  document.getElementById('stage-table').innerHTML = tHtml;
+}
+
+function animateNumber(id, from, to, duration, suffix) {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    el.textContent = Math.round(from + (to - from) * easeOut(p)) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+/* ──────────────────────────────────────────────────────
+   CONSULTATION REQUEST
+──────────────────────────────────────────────────────── */
+function requestConsult() {
+  const btn = document.getElementById('btn-consult');
+  btn.innerHTML = '<span class="loader"></span> Enviando...';
+  btn.disabled = true;
+
+  const scores = computeScores();
+  sendToHubspot(true, scores);
+
+  setTimeout(() => {
+    btn.style.display = 'none';
+    document.getElementById('consult-success').classList.add('show');
+    showToast('✅ Solicitação enviada! Nossa equipe entrará em contato em breve.');
+  }, 1000);
+}
+
+/* ──────────────────────────────────────────────────────
+   HUBSPOT INTEGRATION
+   Envia via Forms API v3 (CORS permitido pelo HubSpot)
+──────────────────────────────────────────────────────── */
+async function sendToHubspot(querConsultoria, scores) {
+  // Se as credenciais não foram configuradas, apenas loga no console
+  if (HS_PORTAL_ID === 'SEU_PORTAL_ID_AQUI' || HS_FORM_GUID === 'SEU_FORM_GUID_AQUI') {
+    console.log('[HubSpot] Credenciais não configuradas. Lead:', {
+      leadData, querConsultoria,
+      score: scores.totalPct,
+      stage: scores.stage.label
+    });
+    return;
+  }
+
+  const url = `https://api.hsforms.com/submissions/v3/integration/submit/${HS_PORTAL_ID}/${HS_FORM_GUID}`;
+  const body = {
+    fields: [
+      { name: 'firstname',          value: leadData.name },
+      { name: 'email',              value: leadData.email },
+      { name: 'phone',              value: leadData.whatsapp },
+      { name: 'city',               value: leadData.city },
+      { name: 'especialidade',      value: leadData.specialty },
+      { name: 'estagio_maturidade', value: scores.stage.label },
+      { name: 'score_maturidade',   value: String(scores.totalPct) },
+      { name: 'quer_consultoria',   value: querConsultoria ? 'true' : 'false' },
+    ],
+    context: {
+      pageUri:  window.location.href,
+      pageName: 'Diagnóstico de Maturidade Digital · MVD Consultoria em Saúde',
+    }
+  };
+
+  try {
+    const res = await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      console.error('[HubSpot] Erro ao enviar:', err);
+    } else {
+      console.log('[HubSpot] Lead enviado com sucesso. quer_consultoria =', querConsultoria);
+    }
+  } catch (e) {
+    console.error('[HubSpot] Falha de rede:', e);
+  }
+}
+
+/* ──────────────────────────────────────────────────────
+   TOAST
+──────────────────────────────────────────────────────── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4500);
+}
+
+/* ──────────────────────────────────────────────────────
+   PHONE MASK
+──────────────────────────────────────────────────────── */
+document.getElementById('lead-whatsapp').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 6)      v = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+  else if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+  else if (v.length > 0) v = `(${v}`;
+  e.target.value = v;
+});
+</script>
+</body>
+</html>
