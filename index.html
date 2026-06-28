@@ -402,6 +402,26 @@
       margin-top: 14px;
       line-height: 1.5;
     }
+    .consent-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      margin: 12px 0;
+      font-size: 0.78rem;
+      color: var(--gray-600);
+      line-height: 1.45;
+    }
+    .consent-group input {
+      width: auto;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+    .consent-group label {
+      margin: 0;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--gray-600);
+    }
 
     /* ── RESULT ── */
     .result-hero {
@@ -816,12 +836,27 @@
         <div class="field-error" id="err-specialty">Selecione uma especialidade</div>
       </div>
 
+      <div class="consent-group">
+        <input type="checkbox" id="lead-lgpd-consent" />
+        <label for="lead-lgpd-consent">
+          Autorizo o uso dos meus dados para envio do diagnóstico e contato da equipe da MVD Consultoria em Saúde. <span class="req">*</span>
+        </label>
+      </div>
+      <div class="field-error" id="err-lgpd">É necessário autorizar o uso dos dados para liberar o resultado.</div>
+
+      <div class="consent-group">
+        <input type="checkbox" id="lead-marketing-consent" />
+        <label for="lead-marketing-consent">
+          Aceito receber conteúdos e comunicações sobre maturidade digital, gestão e inovação em saúde.
+        </label>
+      </div>
+
       <button class="btn btn-primary btn-full btn-lg mt-16" id="btn-submit-lead" onclick="submitLead()">
         Ver meu resultado →
       </button>
 
       <p class="lgpd-note mt-8">
-        🔒 Seus dados são protegidos conforme a LGPD. Utilizados apenas para envio do diagnóstico e contato da nossa equipe.
+        🔒 Seus dados são protegidos conforme a LGPD. Utilizados apenas conforme os consentimentos acima.
       </p>
     </div>
 
@@ -1145,15 +1180,75 @@ function computeScores() {
 /* ──────────────────────────────────────────────────────
    LEAD FORM
 ──────────────────────────────────────────────────────── */
-function submitLead() {
+let isLeadSubmitting = false;
+const LGPD_CONSENT_TEXT = 'Autorizo o uso dos meus dados para envio do diagnóstico e contato da equipe da MVD Consultoria em Saúde.';
+
+function getUtmParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get('utm_source'),
+    utm_medium: params.get('utm_medium'),
+    utm_campaign: params.get('utm_campaign'),
+    utm_term: params.get('utm_term'),
+    utm_content: params.get('utm_content'),
+    utm_id: params.get('utm_id'),
+  };
+}
+
+function buildLeadPayload(lead, scores, consents) {
+  return {
+    lead,
+    scores,
+    answers: { ...answers },
+    utm: getUtmParams(),
+    consent: {
+      accepted: consents.lgpd,
+      marketing: consents.marketing,
+      text: LGPD_CONSENT_TEXT,
+      version: '2026-06-28',
+    },
+    page: {
+      url: window.location.href,
+      referrer: document.referrer || null,
+    },
+    wants_consulting: false,
+  };
+}
+
+async function postLead(payload) {
+  const response = await fetch('/api/leads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error('lead_submission_failed');
+  }
+
+  const data = await response.json();
+  if (!data || data.success !== true) {
+    throw new Error('lead_submission_failed');
+  }
+
+  return data;
+}
+
+async function submitLead() {
+  if (isLeadSubmitting) return;
+
   const name      = document.getElementById('lead-name').value.trim();
   const email     = document.getElementById('lead-email').value.trim();
   const whatsapp  = document.getElementById('lead-whatsapp').value.trim();
   const city      = document.getElementById('lead-city').value.trim();
   const specialty = document.getElementById('lead-specialty').value;
+  const lgpdConsent = document.getElementById('lead-lgpd-consent').checked;
+  const marketingConsent = document.getElementById('lead-marketing-consent').checked;
 
   let valid = true;
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  document.getElementById('lead-error').classList.remove('show');
 
   document.getElementById('err-name').classList.toggle('show', !name);
   document.getElementById('lead-name').classList.toggle('error', !name);
@@ -1175,28 +1270,46 @@ function submitLead() {
   document.getElementById('lead-specialty').classList.toggle('error', !specialty);
   if (!specialty) valid = false;
 
+  document.getElementById('err-lgpd').classList.toggle('show', !lgpdConsent);
+  if (!lgpdConsent) valid = false;
+
   if (!valid) {
-    document.getElementById('lead-error').classList.add('show');
+    const errorEl = document.getElementById('lead-error');
+    errorEl.textContent = 'Preencha todos os campos obrigatórios e aceite o uso dos dados para liberar o resultado.';
+    errorEl.classList.add('show');
     return;
   }
 
   leadData = { name, email, whatsapp, city, specialty };
 
   const btn = document.getElementById('btn-submit-lead');
-  btn.innerHTML = '<span class="loader"></span> Calculando...';
+  btn.innerHTML = '<span class="loader"></span> Enviando...';
   btn.disabled = true;
+  isLeadSubmitting = true;
 
   const scores = computeScores();
+  const payload = buildLeadPayload(leadData, scores, {
+    lgpd: lgpdConsent,
+    marketing: marketingConsent,
+  });
 
-  // Submit to HubSpot (non-blocking)
-  sendToHubspot(false, scores);
-
-  setTimeout(() => {
+  try {
+    await postLead(payload);
     renderResult(leadData, scores);
     showScreen('screen-result');
-    btn.innerHTML = 'Ver meu resultado →';
+  } catch (error) {
+    const errorEl = document.getElementById('lead-error');
+    errorEl.textContent = 'Não foi possível liberar seu resultado agora. Verifique sua conexão e tente novamente.';
+    errorEl.classList.add('show');
+    btn.innerHTML = 'Tentar novamente →';
     btn.disabled = false;
-  }, 1200);
+    isLeadSubmitting = false;
+    return;
+  }
+
+  btn.innerHTML = 'Ver meu resultado →';
+  btn.disabled = false;
+  isLeadSubmitting = false;
 }
 
 /* ──────────────────────────────────────────────────────
